@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinConsult Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #1a56db;
+            --primary-dark: #1e429f;
+            --primary-light: #e8f0fe;
+            --secondary: #0e9f6e;
+            --secondary-light: #e6f9f0;
+            --danger: #e02424;
+            --danger-light: #fde8e8;
+            --warning: #ff8800;
+            --warning-light: #fff3e0;
+            --dark: #111827;
+            --gray-900: #1f2937;
+            --gray-800: #374151;
+            --gray-700: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --gray-50: #f9fafb;
+            --white: #ffffff;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.04);
+            --radius-sm: 6px;
+            --radius: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--gray-900);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(26,86,219,0.4);
+        }
+
+        .logo-text { display: flex; flex-direction: column; }
+        .logo-text strong { color: white; font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+        .logo-text span { color: var(--gray-400); font-size: 11px; font-weight: 400; }
+
+        .sidebar-section {
+            padding: 20px 12px 8px;
+        }
+
+        .sidebar-section-title {
+            color: var(--gray-500);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 0 8px;
+            margin-bottom: 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: var(--gray-400);
+            font-size: 13.5px;
+            font-weight: 500;
+            margin-bottom: 2px;
+            position: relative;
+        }
+
+        .nav-item:hover { background: rgba(255,255,255,0.06); color: white; }
+
+        .nav-item.active {
+            background: rgba(26,86,219,0.25);
+            color: #93b4fd;
+        }
+
+        .nav-item.active .nav-icon { color: var(--primary); }
+
+        .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 20px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 16px 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .user-profile:hover { background: rgba(255,255,255,0.06); }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .user-info { flex: 1; min-width: 0; }
+        .user-info strong { color: white; font-size: 12.5px; font-weight: 600; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-info span { color: var(--gray-500); font-size: 11px; }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-title {
+            flex: 1;
+        }
+
+        .header-title h1 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .header-title p {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(26,86,219,0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-outline:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+
+        .btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #057a55;
+            box-shadow: 0 4px 12px rgba(14,159,110,0.3);
+            transform: translateY(-1px);
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-200);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: all 0.15s;
+            position: relative;
+        }
+
+        .icon-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+
+        .notif-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 7px;
+            height: 7px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 1.5px solid white;
+        }
+
+        /* ===== CONTENT ===== */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-100);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .stat-icon.blue { background: var(--primary-light); color: var(--primary); }
+        .stat-icon.green { background: var(--secondary-light); color: var(--secondary); }
+        .stat-icon.orange { background: var(--warning-light); color: var(--warning); }
+        .stat-icon.red { background: var(--danger-light); color: var(--danger); }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        .stat-trend.up { color: var(--secondary); background: var(--secondary-light); }
+        .stat-trend.down { color: var(--danger); background: var(--danger-light); }
+        .stat-trend.neutral { color: var(--gray-500); background: var(--gray-100); }
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--gray-900);
+            letter-spacing: -0.5px;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12.5px;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* ===== GRID LAYOUT ===== */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+        /* ===== CARD ===== */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-100);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 18px 20px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 2px;
+        }
+
+        .card-body { padding: 20px; }
+
+        /* ===== CLIENT TABLE ===== */
+        .table-wrapper { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        tbody td {
+            padding: 13px 14px;
+            font-size: 13.5px;
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+
+        tbody tr {
+            transition: background 0.1s;
+            cursor: pointer;
+        }
+
+        tbody tr:hover { background: var(--gray-50); }
+
+        .client-info { display: flex; align-items: center; gap: 10px; }
+
+        .client-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .client-name { font-weight: 600; color: var(--gray-900); font-size: 13.5px; }
+        .client-type { font-size: 11.5px; color: var(--gray-500); }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: var(--secondary-light); color: var(--secondary); }
+        .badge-warning { background: var(--warning-light); color: var(--warning); }
+        .badge-danger { background: var(--danger-light); color: var(--danger); }
+        .badge-info { background: var(--primary-light); color: var(--primary); }
+
+        .action-btns { display: flex; gap: 6px; }
+
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--gray-500);
+            transition: all 0.15s;
+            font-size: 12px;
+        }
+
+        .action-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+
+        /* ===== CHECKLIST ===== */
+        .checklist-block {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .checklist-block-header {
+            padding: 14px 18px;
+            background: var(--gray-50);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .block-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .block-title { font-weight: 700; font-size: 13.5px; color: var(--gray-800); }
+        .block-desc { font-size: 11.5px; color: var(--gray-500); }
+        .block-progress { margin-left: auto; text-align: right; }
+        .progress-text { font-size: 11px; color: var(--gray-500); font-weight: 600; margin-bottom: 4px; }
+
+        .progress-bar-wrap {
+            width: 100px;
+            height: 5px;
+            background: var(--gray-200);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .checklist-items { padding: 4px 0; }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 18px;
+            transition: background 0.1s;
+            border-bottom: 1px solid var(--gray-50);
+        }
+
+        .check-item:last-child { border-bottom: none; }
+        .check-item:hover { background: var(--gray-50); }
+
+        .check-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .check-label { font-size: 13.5px; color: var(--gray-700); cursor: pointer; line-height: 1.4; }
+        .check-label.checked { color: var(--gray-400); text-decoration: line-through; }
+        .check-note { font-size: 11.5px; color: var(--gray-400); margin-top: 2px; }
+
+        /* ===== DRE TABLE ===== */
+        .dre-table { width: 100%; border-collapse: collapse; }
+
+        .dre-table tr td {
+            padding: 10px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .dre-section-title {
+            background: var(--gray-800) !important;
+            color: white !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dre-group-title {
+            background: var(--gray-100) !important;
+            color: var(--gray-700) !important;
+            font-weight: 600 !important;
+        }
+
+        .dre-total {
+            background: var(--primary-light) !important;
+            color: var(--primary-dark) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+        }
+
+        .dre-result {
+            background: var(--secondary-light) !important;
+            color: #065f46 !important;
+            font-weight: 800 !important;
+            font-size: 15px !important;
+        }
+
+        .dre-result-neg {
+            background: var(--danger-light) !important;
+            color: var(--danger) !important;
+            font-weight: 800 !important;
+            font-size: 15px !important;
+        }
+
+        .text-right { text-align: right; }
+        .text-green { color: var(--secondary); font-weight: 600; }
+        .text-red { color: var(--danger); font-weight: 600; }
+        .text-bold { font-weight: 700; }
+
+        /* ===== FLUXO ===== */
+        .fluxo-months {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .month-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-300);
+            background: white;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--gray-600);
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .month-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .month-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* ===== UPLOAD ===== */
+        .upload-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .upload-icon { font-size: 40px; color: var(--gray-400); margin-bottom: 12px; }
+        .upload-title { font-size: 15px; font-weight: 700; color: var(--gray-700); margin-bottom: 6px; }
+        .upload-sub { font-size: 13px; color: var(--gray-500); }
+
+        .file-list { margin-top: 20px; }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .file-icon { font-size: 22px; }
+        .file-name { font-size: 13.5px; font-weight: 600; color: var(--gray-700); }
+        .file-size { font-size: 11.5px; color: var(--gray-400); }
+        .file-status { margin-left: auto; }
+
+        /* ===== CLIENT PORTAL ===== */
+        .portal-header {
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portal-header::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .portal-header::before {
+            content: '';
+            position: absolute;
+            right: 40px;
+            bottom: -30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .portal-greeting { font-size: 13px; opacity: 0.8; margin-bottom: 4px; }
+        .portal-name { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+        .portal-meta { font-size: 12px; opacity: 0.7; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-xl);
+            width: 520px;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: modalIn 0.2s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title { font-size: 16px; font-weight: 700; }
+        .modal-close { font-size: 20px; cursor: pointer; color: var(--gray-500); transition: color 0.15s; }
+        .modal-close:hover { color: var(--danger); }
+        .modal-body { padding: 20px 24px; }
+        .modal-footer { padding: 16px 24px 20px; display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid var(--gray-100); }
+
+        /* ===== FORM ===== */
+        .form-group { margin-bottom: 16px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-label { display: block; font-size: 12.5px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+        .form-label span { color: var(--danger); }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.5px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            color: var(--gray-800);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.15s;
+            background: white;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+        }
+
+        .form-textarea { resize: vertical; min-height: 80px; }
+
+        /* ===== LOGIN ===== */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #0f172a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            width: 400px;
+            max-width: 95vw;
+            box-shadow: var(--shadow-xl);
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(26,86,219,0.3);
+        }
+
+        .login-title { font-size: 22px; font-weight: 800; color: var(--gray-900); margin-bottom: 4px; }
+        .login-sub { font-size: 13.5px; color: var(--gray-500); margin-bottom: 28px; }
+
+        .login-tabs {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            margin-bottom: 24px;
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-500);
+            transition: all 0.15s;
+            border: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(26,86,219,0.35);
+        }
+
+        .login-forgot { font-size: 12px; color: var(--primary); cursor: pointer; text-align: right; margin-top: 6px; display: block; }
+
+        /* ===== NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--gray-900);
+            color: white;
+            padding: 12px 18px;
+            border-radius: var(--radius);
+            font-size: 13.5px;
+            font-weight: 500;
+            z-index: 9998;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* ===== RESPONSIVO ===== */
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-400);
+        }
+        .empty-state i { font-size: 40px; margin-bottom: 12px; display: block; }
+        .empty-state p { font-size: 14px; }
+
+        /* segment control */
+        .seg-ctrl {
+            display: inline-flex;
+            background: var(--gray-100);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            gap: 2px;
+        }
+        .seg-btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+        .seg-btn.active { background: white; color: var(--primary); box-shadow: var(--shadow-sm); }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-card">
+        <div class="login-logo"><i class="fas fa-chart-line"></i></div>
+        <h2 class="login-title">FinConsult Pro</h2>
+        <p class="login-sub">Gestão Financeira Inteligente</p>
+
+        <div class="login-tabs">
+            <button class="login-tab active" onclick="setLoginTab('consultor')">👨‍💼 Consultor</button>
+            <button class="login-tab" onclick="setLoginTab('cliente')">👤 Cliente</button>
+        </div>
+
+        <div class="form-group" style="text-align:left">
+            <label class="form-label">E-mail</label>
+            <input class="form-input" type="email" placeholder="seu@email.com" id="loginEmail">
+        </div>
+        <div class="form-group" style="text-align:left">
+            <label class="form-label">Senha</label>
+            <input class="form-input" type="password" placeholder="••••••••" id="loginPass">
+            <span class="login-forgot">Esqueci minha senha</span>
+        </div>
+
+        <button class="login-btn" onclick="doLogin()">
+            <i class="fas fa-sign-in-alt"></i> Entrar
+        </button>
+
+        <p style="font-size:11.5px;color:var(--gray-400);margin-top:16px;">
+            Demo: <strong>consultor@demo.com</strong> / <strong>123456</strong><br>
+            Cliente: <strong>cliente@demo.com</strong> / <strong>123456</strong>
+        </p>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-wrapper">
+            <div class="logo-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="logo-text">
+                <strong>FinConsult Pro</strong>
+                <span>Gestão Financeira</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="consultorNav" style="flex:1;overflow-y:auto;">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Principal</div>
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-th-large nav-icon"></i> Dashboard
+            </div>
+            <div class="nav-item" onclick="showSection('clientes')">
+                <i class="fas fa-users nav-icon"></i> Clientes
+                <span class="nav-badge">8</span>
+            </div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Financeiro</div>
+            <div class="nav-item" onclick="showSection('checklist')">
+                <i class="fas fa-clipboard-check nav-icon"></i> Diagnóstico
+            </div>
+            <div class="nav-item" onclick="showSection('lancamentos')">
+                <i class="fas fa-exchange-alt nav-icon"></i> Lançamentos
+            </div>
+            <div class="nav-item" onclick="showSection('dre')">
+                <i class="fas fa-file-invoice-dollar nav-icon"></i> DRE Gerencial
+            </div>
+            <div class="nav-item" onclick="showSection('fluxo')">
+                <i class="fas fa-water nav-icon"></i> Fluxo de Caixa
+            </div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Documentos</div>
+            <div class="nav-item" onclick="showSection('upload')">
+                <i class="fas fa-cloud-upload-alt nav-icon"></i> Upload Docs
+                <span class="nav-badge" style="background:var(--warning)">3</span>
+            </div>
+            <div class="nav-item" onclick="showSection('relatorios')">
+                <i class="fas fa-file-pdf nav-icon"></i> Relatórios PDF
+            </div>
+        </div>
+    </div>
+
+    <div id="clienteNav" style="flex:1;overflow-y:auto;display:none;">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Minha Área</div>
+            <div class="nav-item active" onclick="showSection('portalDash')">
+                <i class="fas fa-home nav-icon"></i> Início
+            </div>
+            <div class="nav-item" onclick="showSection('portalDRE')">
+                <i class="fas fa-file-invoice-dollar nav-icon"></i> Meu DRE
+            </div>
+            <div class="nav-item" onclick="showSection('portalFluxo')">
+                <i class="fas fa-water nav-icon"></i> Fluxo de Caixa
+            </div>
+            <div class="nav-item" onclick="showSection('portalDocs')">
+                <i class="fas fa-folder nav-icon"></i> Documentos
+            </div>
+            <div class="nav-item" onclick="showSection('portalRelatorios')">
+                <i class="fas fa-chart-bar nav-icon"></i> Relatórios
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="user-profile" onclick="logout()">
+            <div class="user-avatar" id="avatarInitials">AD</div>
+            <div class="user-info">
+                <strong id="userNameDisplay">Andre Demo</strong>
+                <span id="userRoleDisplay">Consultor</span>
+            </div>
+            <i class="fas fa-sign-out-alt" style="color:var(--gray-500);font-size:13px;"></i>
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-title">
+            <h1 id="pageTitle">Dashboard</h1>
+            <p id="pageSubtitle">Visão geral de todos os clientes • Março 2026</p>
+        </div>
+        <div class="header-actions">
+            <div class="seg-ctrl" id="periodoCtrl">
+                <button class="seg-btn" onclick="setPeriodo(this,'hoje')">Hoje</button>
+                <button class="seg-btn active" onclick="setPeriodo(this,'mes')">Mês</button>
+                <button class="seg-btn" onclick="setPeriodo(this,'ano')">Ano</button>
+            </div>
+            <div class="icon-btn" onclick="showToast('🔔 Nenhuma notificação nova')">
+                <i class="fas fa-bell"></i>
+                <div class="notif-dot"></div>
+            </div>
+            <button class="btn btn-primary" id="headerActionBtn" onclick="openModal('novoCliente')">
+                <i class="fas fa-plus"></i> Novo Cliente
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <!-- ===================== DASHBOARD ===================== -->
+        <div class="section active" id="s-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card" onclick="showSection('clientes')">
+                    <div class="stat-header">
+                        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                        <div class="stat-trend up"><i class="fas fa-arrow-up"></i> +2</div>
+                    </div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Clientes Ativos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon green"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</div>
+                    </div>
+                    <div class="stat-value">R$48k</div>
+                    <div class="stat-label">Receita Total Clientes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon orange"><i class="fas fa-clipboard-check"></i></div>
+                        <div class="stat-trend neutral">3 pend.</div>
+                    </div>
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Diagnósticos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-trend down"><i class="fas fa-arrow-down"></i> Atenção</div>
+                    </div>
+                    <div class="stat-value">2</div>
+                    <div class="stat-label">Clientes em Alerta</div>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Receita vs Despesa — Clientes</div>
+                            <div class="card-subtitle">Comparativo últimos 6 meses</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartRecDesp" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Status dos Clientes</div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="chartStatus" height="180"></canvas>
+                        <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+                                <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#0e9f6e;display:inline-block;"></span>Saudável</span>
+                                <strong>5 clientes</strong>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+                                <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#ff8800;display:inline-block;"></span>Atenção</span>
+                                <strong>2 clientes</strong>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+                                <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#e02424;display:inline-block;"></span>Crítico</span>
+                                <strong>1 cliente</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Últimos Clientes Atendidos</div>
+                        <div class="card-subtitle">Atualizados recentemente</div>
+                    </div>
+                    <button class="btn btn-outline" onclick="showSection('clientes')">
+                        <i class="fas fa-list"></i> Ver Todos
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Tipo</th>
+                                <th>Segmento</th>
+                                <th>Receita Mês</th>
+                                <th>Status</th>
+                                <th>Diagnóstico</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="showSection('dre')">
+                                <td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#1a56db,#6366f1)">MF</div><div><div class="client-name">Moda Fashion Ltda</div><div class="client-type">CNPJ: 12.345.678/0001-90</div></div></div></td>
+                                <td><span class="badge badge-info">ME</span></td>
+                                <td>Loja de Roupas</td>
+                                <td class="text-green">R$ 18.400</td>
+                                <td><span class="badge badge-success">Saudável</span></td>
+                                <td><span class="badge badge-success">Concluído</span></td>
+                                <td><div class="action-btns"><button class="action-btn" title="Ver detalhes"><i class="fas fa-eye"></i></button><button class="action-btn" title="DRE"><i class="fas fa-file-invoice-dollar"></i></button><button class="action-btn" title="Editar"><i class="fas fa-edit"></i></button></div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">JS</div><div><div class="client-name">João Silva</div><div class="client-type">CPF: 123.456.789-00</div></div></div></td>
+                                <td><span class="badge badge-warning">PF</span></td>
+                                <td>Imóveis</td>
+                                <td class="text-green">R$ 9.200</td>
+                                <td><span class="badge badge-warning">Atenção</span></td>
+                                <td><span class="badge badge-warning">Em andamento</span></td>
+                                <td><div class="action-btns"><button class="action-btn"><i class="fas fa-eye"></i></button><button class="action-btn"><i class="fas fa-file-invoice-dollar"></i></button><button class="action-btn"><i class="fas fa-edit"></i></button></div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#0e9f6e,#10b981)">TB</div><div><div class="client-name">Tech Bites Ltda</div><div class="client-type">CNPJ: 98.765.432/0001-11</div></div></div></td>
+                                <td><span class="badge badge-info">MEI</span></td>
+                                <td>Alimentação</td>
+                                <td class="text-green">R$ 7.800</td>
+                                <td><span class="badge badge-success">Saudável</span></td>
+                                <td><span class="badge badge-success">Concluído</span></td>
+                                <td><div class="action-btns"><button class="action-btn"><i class="fas fa-eye"></i></button><button class="action-btn"><i class="fas fa-file-invoice-dollar"></i></button><button class="action-btn"><i class="fas fa-edit"></i></button></div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#e02424,#f05252)">MC</div><div><div class="client-name">Maria Costa</div><div class="client-type">CPF: 987.654.321-00</div></div></div></td>
+                                <td><span class="badge badge-warning">PF</span></td>
+                                <td>Imóveis</td>
+                                <td class="text-red">R$ 3.100</td>
+                                <td><span class="badge badge-danger">Crítico</span></td>
+                                <td><span class="badge badge-info">Agendado</span></td>
+                                <td><div class="action-btns"><button class="action-btn"><i class="fas fa-eye"></i></button><button class="action-btn"><i class="fas fa-file-invoice-dollar"></i></button><button class="action-btn"><i class="fas fa-edit"></i></button></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== CLIENTES ===================== -->
+        <div class="section" id="s-clientes">
+            <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;">
+                <input class="form-input" style="max-width:280px;" placeholder="🔍  Buscar cliente...">
+                <select class="form-select" style="max-width:160px;">
+                    <option>Todos os tipos</option>
+                    <option>MEI</option>
+                    <option>ME</option>
+                    <option>Pessoa Física</option>
+                </select>
+                <select class="form-select" style="max-width:160px;">
+                    <option>Todos os status</option>
+                    <option>Saudável</option>
+                    <option>Atenção</option>
+                    <option>Crítico</option>
+                </select>
+                <button class="btn btn-primary" style="margin-left:auto;" onclick="openModal('novoCliente')">
+                    <i class="fas fa-user-plus"></i> Novo Cliente
+                </button>
+            </div>
+            <div class="card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Tipo</th>
+                                <th>Segmento</th>
+                                <th>Telefone</th>
+                                <th>Receita Mês</th>
+                                <th>Status</th>
+                                <th>Diagnóstico</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#1a56db,#6366f1)">MF</div><div><div class="client-name">Moda Fashion Ltda</div><div class="client-type">CNPJ: 12.345.678/0001-90</div></div></div></td><td><span class="badge badge-info">ME</span></td><td>Loja de Roupas</td><td>(45) 99900-1234</td><td class="text-green">R$ 18.400</td><td><span class="badge badge-success">Saudável</span></td><td><span class="badge badge-success">Concluído</span></td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-eye"></i></button><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">JS</div><div><div class="client-name">João Silva</div><div class="client-type">CPF: 123.456.789-00</div></div></div></td><td><span class="badge badge-warning">PF</span></td><td>Imóveis</td><td>(45) 99988-5678</td><td class="text-green">R$ 9.200</td><td><span class="badge badge-warning">Atenção</span></td><td><span class="badge badge-warning">Em andamento</span></td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-eye"></i></button><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#0e9f6e,#10b981)">TB</div><div><div class="client-name">Tech Bites Ltda</div><div class="client-type">CNPJ: 98.765.432/0001-11</div></div></div></td><td><span class="badge badge-info">MEI</span></td><td>Alimentação</td><td>(45) 99955-9012</td><td class="text-green">R$ 7.800</td><td><span class="badge badge-success">Saudável</span></td><td><span class="badge badge-success">Concluído</span></td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-eye"></i></button><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#e02424,#f05252)">MC</div><div><div class="client-name">Maria Costa</div><div class="client-type">CPF: 987.654.321-00</div></div></div></td><td><span class="badge badge-warning">PF</span></td><td>Imóveis</td><td>(45) 99933-3456</td><td class="text-red">R$ 3.100</td><td><span class="badge badge-danger">Crítico</span></td><td><span class="badge badge-info">Agendado</span></td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-eye"></i></button><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td><div class="client-info"><div class="client-avatar" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">PM</div><div><div class="client-name">Padaria Mais Pão</div><div class="client-type">CNPJ: 11.222.333/0001-44</div></div></div></td><td><span class="badge badge-info">MEI</span></td><td>Alimentação</td><td>(45) 99911-7890</td><td class="text-green">R$ 5.600</td><td><span class="badge badge-success">Saudável</span></td><td><span class="badge badge-success">Concluído</span></td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-eye"></i></button><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== CHECKLIST ===================== -->
+        <div class="section" id="s-checklist">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                <select class="form-select" style="max-width:240px;">
+                    <option>João Silva — PF Imóveis</option>
+                    <option>Moda Fashion Ltda</option>
+                    <option>Maria Costa</option>
+                </select>
+                <span style="font-size:13px;color:var(--gray-500);">Diagnóstico em andamento — <strong>62% concluído</strong></span>
+                <button class="btn btn-success" style="margin-left:auto;" onclick="showToast('✅ Diagnóstico salvo com sucesso!')">
+                    <i class="fas fa-save"></i> Salvar Progresso
+                </button>
+            </div>
+
+            <!-- Bloco 1 -->
+            <div class="checklist-block">
+                <div class="checklist-block-header">
+                    <div class="block-icon" style="background:#e8f0fe;"><i class="fas fa-id-card" style="color:#1a56db;"></i></div>
+                    <div><div class="block-title">Bloco 1 — Identificação e Perfil</div><div class="block-desc">Dados cadastrais e informações básicas</div></div>
+                    <div class="block-progress"><div class="progress-text">4/4 itens</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%;background:#0e9f6e;"></div></div></div>
+                </div>
+                <div class="checklist-items">
+                    <div class="check-item"><input type="checkbox" checked id="c1"><label class="check-label checked" for="c1">Nome completo / Razão Social coletado</label></div>
+                    <div class="check-item"><input type="checkbox" checked id="c2"><label class="check-label checked" for="c2">CPF/CNPJ, endereço e contato registrados</label></div>
+                    <div class="check-item"><input type="checkbox" checked id="c3"><label class="check-label checked" for="c3">Tipo de negócio e segmento identificados</label><div class="check-note">Pessoa Física com investimento em imóveis para locação</div></div>
+                    <div class="check-item"><input type="checkbox" checked id="c4"><label class="check-label checked" for="c4">Tempo de atuação no mercado levantado</label></div>
+                </div>
+            </div>
+
+            <!-- Bloco 2 -->
+            <div class="checklist-block">
+                <div class="checklist-block-header">
+                    <div class="block-icon" style="background:#fef3c7;"><i class="fas fa-university" style="color:#d97706;"></i></div>
+                    <div><div class="block-title">Bloco 2 — Situação Bancária</div><div class="block-desc">Contas, saldos e relacionamento bancário</div></div>
+                    <div class="block-progress"><div class="progress-text">3/5 itens</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:60%;background:#ff8800;"></div></div></div>
+                </div>
+                <div class="checklist-items">
+                    <div class="check-item"><input type="checkbox" checked id="c5"><label class="check-label checked" for="c5">Levantamento de todas as contas bancárias ativas</label></div>
+                    <div class="check-item"><input type="checkbox" checked id="c6"><label class="check-label checked" for="c6">Verificação de contas bancárias inativas ou esquecidas</label></div>
+                    <div class="check-item"><input type="checkbox" checked id="c7"><label class="check-label checked" for="c7">Saldo atual de cada conta registrado</label></div>
+                    <div class="check-item"><input type="checkbox" id="c8"><label class="check-label" for="c8">Extrato dos últimos 3 meses solicitado</label></div>
+                    <div class="check-item"><input type="checkbox" id="c9"><label class="check-label" for="c9">Existência de cheque especial / limite de crédito mapeada</label></div>
+                </div>
+            </div>
+
+            <!-- Bloco 3 -->
+            <div class="checklist-block">
+                <div class="checklist-block-header">
+                    <div class="block-icon" style="background:#e6f9f0;"><i class="fas fa-arrow-up" style="color:#0e9f6e;"></i></div>
+                    <div><div class="block-title">Bloco 3 — Controle de Receitas</div><div class="block-desc">Fontes de renda e recebimentos</div></div>
+                    <div class="block-progress"><div class="progress-text">2/5 itens</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:40%;background:#1a56db;"></div></div></div>
+                </div>
+                <div class="checklist-items">
+                    <div class="check-item"><input type="checkbox" checked id="c10"><label class="check-label checked" for="c10">Todas as fontes de receita identificadas e documentadas</label></div>
+                    <div class="check-item"><input type="checkbox" checked id="c11"><label class="check-label checked" for="c11">Receitas fixas vs variáveis separadas</label></div>
+                    <div class="check-item"><input type="checkbox" id="c12"><label class="check-label" for="c12">Sazonalidade das receitas analisada</label></div>
+                    <div class="check-item"><input type="checkbox" id="c13"><label class="check-label" for="c13">Inadimplência / recebimentos em atraso mapeados</label></div>
+                    <div class="check-item"><input type="checkbox" id="c14"><label class="check-label" for="c14">NFs de entrada / recibos de locação coletados</label></div>
+                </div>
+            </div>
+
+            <!-- Bloco 4 -->
+            <div class="checklist-block">
+                <div class="checklist-block-header">
+                    <div class="block-icon" style="background:#fde8e8;"><i class="fas fa-arrow-down" style="color:#e02424;"></i></div>
+                    <div><div class="block-title">Bloco 4 — Controle de Despesas</div><div class="block-desc">Custos fixos, variáveis e inadimplência</div></div>
+                    <div class="block-progress"><div class="progress-text">1/5 itens</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:20%;background:#e02424;"></div></div></div>
+                </div>
+                <div class="checklist-items">
+                    <div class="check-item"><input type="checkbox" checked id="c15"><label class="check-label checked" for="c15">Lista de despesas fixas mensais levantada</label></div>
+                    <div class="check-item"><input type="checkbox" id="c16"><label class="check-label" for="c16">Despesas variáveis dos últimos 3 meses levantadas</label></div>
+                    <div class="check-item"><input type="checkbox" id="c17"><label class="check-label" for="c17">Contas em atraso / dívidas identificadas</label></div>
+                    <div class="check-item"><input type="checkbox" id="c18"><label class="check-label" for="c18">Despesas pessoais x profissionais separadas</label></div>
+                    <div class="check-item"><input type="checkbox" id="c19"><label class="check-label" for="c19">NFs de saída / comprovantes de pagamento coletados</label></div>
+                </div>
+            </div>
+
+            <!-- Bloco 5 -->
+            <div class="checklist-block">
+                <div class="checklist-block-header">
+                    <div class="block-icon" style="background:#ede9fe;"><i class="fas fa-building" style="color:#7c3aed;"></i></div>
+                    <div><div class="block-title">Bloco 5 — Patrimônio e Dívidas</div><div class="block-desc">Ativos, passivos e situação patrimonial</div></div>
+                    <div class="block-progress"><div class="progress-text">0/4 itens</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%;background:#7c3aed;"></div></div></div>
+                </div>
+                <div class="checklist-items">
+                    <div class="check-item"><input type="checkbox" id="c20"><label class="check-label" for="c20">Lista de imóveis (próprios/alugados) com valores</label></div>
+                    <div class="check-item"><input type="checkbox" id="c21"><label class="check-label" for="c21">Financiamentos e empréstimos ativos levantados</label></div>
+                    <div class="check-item"><input type="checkbox" id="c22"><label class="check-label" for="c22">Veículos e bens de alto valor mapeados</label></div>
+                    <div class="check-item"><input type="checkbox" id="c23"><label class="check-label" for="c23">Investimentos financeiros identificados</label></div>
+                </div>
+            </div>
+
+            <!-- Bloco 6 -->
+            <div class="checklist-block">
+                <div class="checklist-block-header">
+                    <div class="block-icon" style="background:#e0f2fe;"><i class="fas fa-cogs" style="color:#0284c7;"></i></div>
+                    <div><div class="block-title">Bloco 6 — Gestão Atual</div><div class="block-desc">Nível de organização financeira atual</div></div>
+                    <div class="block-progress"><div class="progress-text">0/4 itens</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%;background:#0284c7;"></div></div></div>
+                </div>
+                <div class="checklist-items">
+                    <div class="check-item"><input type="checkbox" id="c24"><label class="check-label" for="c24">Usa algum sistema de gestão financeira atualmente?</label></div>
+                    <div class="check-item"><input type="checkbox" id="c25"><label class="check-label" for="c25">Faz conciliação bancária mensalmente?</label></div>
+                    <div class="check-item"><input type="checkbox" id="c26"><label class="check-label" for="c26">Possui contador / escritório contábil?</label></div>
+                    <div class="check-item"><input type="checkbox" id="c27"><label class="check-label" for="c27">Conhece seu resultado (lucro/prejuízo) mensal real?</label></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== LANÇAMENTOS ===================== -->
+        <div class="section" id="s-lancamentos">
+            <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;flex-wrap:wrap;">
+                <select class="form-select" style="max-width:220px;">
+                    <option>Moda Fashion Ltda</option>
+                    <option>João Silva</option>
+                </select>
+                <select class="form-select" style="max-width:150px;">
+                    <option>Março 2026</option>
+                    <option>Fevereiro 2026</option>
+                </select>
+                <button class="btn btn-primary" style="margin-left:auto;" onclick="openModal('novoLanc')">
+                    <i class="fas fa-plus"></i> Novo Lançamento
+                </button>
+            </div>
+            <div class="grid-2" style="margin-bottom:20px;">
+                <div class="stat-card"><div class="stat-header"><div class="stat-icon green"><i class="fas fa-arrow-up"></i></div><div class="stat-trend up">+8%</div></div><div class="stat-value">R$ 18.400</div><div class="stat-label">Total Receitas — Março</div></div>
+                <div class="stat-card"><div class="stat-header"><div class="stat-icon red"><i class="fas fa-arrow-down"></i></div><div class="stat-trend down">+3%</div></div><div class="stat-value">R$ 11.240</div><div class="stat-label">Total Despesas — Março</div></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-title">Lançamentos — Moda Fashion Ltda</div></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead>
+                        <tbody>
+                            <tr><td>17/03/2026</td><td>Vendas balcão</td><td>Receita Operacional</td><td><span class="badge badge-success">Receita</span></td><td class="text-green">+ R$ 3.200,00</td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td>16/03/2026</td><td>Aluguel da loja</td><td>Despesa Fixa</td><td><span class="badge badge-danger">Despesa</span></td><td class="text-red">- R$ 2.800,00</td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td>15/03/2026</td><td>Vendas online</td><td>Receita Operacional</td><td><span class="badge badge-success">Receita</span></td><td class="text-green">+ R$ 1.850,00</td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td>14/03/2026</td><td>Fornecedor Têxtil ABC</td><td>Custo de Mercadoria</td><td><span class="badge badge-danger">Despesa</span></td><td class="text-red">- R$ 5.400,00</td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                            <tr><td>10/03/2026</td><td>Folha de pagamento</td><td>Despesa com Pessoal</td><td><span class="badge badge-danger">Despesa</span></td><td class="text-red">- R$ 4.200,00</td><td><div class="action-btns"><button class="action-btn"><i class="fas fa-edit"></i></button><button class="action-btn" style="color:var(--danger)"><i class="fas fa-trash"></i></button></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== DRE ===================== -->
+        <div class="section" id="s-dre">
+            <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;flex-wrap:wrap;">
+                <select class="form-select" style="max-width:220px;">
+                    <option>Moda Fashion Ltda</option>
+                    <option>João Silva</option>
+                </select>
+                <select class="form-select" style="max-width:160px;">
+                    <option>Março 2026</option>
+                    <option>Fevereiro 2026</option>
+                    <option>Janeiro 2026</option>
+                </select>
+                <button class="btn btn-success" style="margin-left:auto;" onclick="showToast('📄 PDF gerado com sucesso!')">
+                    <i class="fas fa-file-pdf"></i> Exportar PDF
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">DRE Gerencial — Moda Fashion Ltda</div>
+                        <div class="card-subtitle">Demonstrativo de Resultado do Exercício • Março/2026</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="dre-table">
+                        <tr><td colspan="3" class="dre-section-title"><i class="fas fa-plus-circle" style="margin-right:8px;"></i>RECEITAS</td></tr>
+                        <tr><td style="padding-left:28px;">Vendas Balcão</td><td class="text-right text-green">R$ 12.800,00</td><td class="text-right" style="color:var(--gray-400);font-size:12px;">69,6%</td></tr>
+                        <tr><td style="padding-left:28px;">Vendas Online</td><td class="text-right text-green">R$ 5.600,00</td><td class="text-right" style="color:var(--gray-400);font-size:12px;">30,4%</td></tr>
+                        <tr><td colspan="3" class="dre-total"><td>Receita Bruta Total</td><td class="text-right">R$ 18.400,00</td><td></td></tr>
+                        <tr><td style="padding-left:28px;">(-) Devoluções e Descontos</td><td class="text-right text-red">- R$ 320,00</td><td></td></tr>
+                        <tr><td colspan="3" class="dre-total"><td>= Receita Líquida</td><td class="text-right">R$ 18.080,00</td><td></td></tr>
+
+                        <tr><td colspan="3" class="dre-section-title" style="margin-top:8px;"><i class="fas fa-minus-circle" style="margin-right:8px;"></i>CUSTOS</td></tr>
+                        <tr><td style="padding-left:28px;">(-) Custo de Mercadoria Vendida (CMV)</td><td class="text-right text-red">- R$ 8.200,00</td><td class="text-right" style="color:var(--gray-400);font-size:12px;">44,6%</td></tr>
+                        <tr><td colspan="3" class="dre-total"><td>= Lucro Bruto</td><td class="text-right">R$ 9.880,00</td><td></td></tr>
+
+                        <tr><td colspan="3" class="dre-section-title"><i class="fas fa-list-alt" style="margin-right:8px;"></i>DESPESAS OPERACIONAIS</td></tr>
+                        <tr><td colspan="3" class="dre-group-title"><td style="padding-left:14px;">Despesas com Pessoal</td><td></td><td></td></tr>
+                        <tr><td style="padding-left:36px;">Salários e Encargos</td><td class="text-right text-red">- R$ 4.200,00</td><td></td></tr>
+                        <tr><td colspan="3" class="dre-group-title"><td style="padding-left:14px;">Despesas Administrativas</td><td></td><td></td></tr>
+                        <tr><td style="padding-left:36px;">Aluguel</td><td class="text-right text-red">- R$ 2.800,00</td><td></td></tr>
+                        <tr><td style="padding-left:36px;">Energia e Água</td><td class="text-right text-red">- R$ 380,00</td><td></td></tr>
+                        <tr><td style="padding-left:36px;">Sistema / Internet</td><td class="text-right text-red">- R$ 180,00</td><td></td></tr>
+                        <tr><td colspan="3" class="dre-group-title"><td style="padding-left:14px;">Despesas Comerciais</td><td></td><td></td></tr>
+                        <tr><td style="padding-left:36px;">Marketing e Publicidade</td><td class="text-right text-red">- R$ 650,00</td><td></td></tr>
+                        <tr><td style="padding-left:36px;">Fretes e Embalagens</td><td class="text-right text-red">- R$ 210,00</td><td></td></tr>
+                        <tr><td colspan="3" class="dre-total"><td>= Total Despesas Operacionais</td><td class="text-right text-red">- R$ 8.420,00</td><td></td></tr>
+
+                        <tr><td colspan="3" class="dre-result"><td><i class="fas fa-trophy" style="margin-right:8px;"></i>RESULTADO LÍQUIDO (LUCRO)</td><td class="text-right">R$ 1.460,00</td><td class="text-right" style="font-size:12px;font-weight:600;">Margem: 7,9%</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== FLUXO DE CAIXA ===================== -->
+        <div class="section" id="s-fluxo">
+            <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center;flex-wrap:wrap;">
+                <select class="form-select" style="max-width:220px;">
+                    <option>Moda Fashion Ltda</option>
+                    <option>João Silva</option>
+                </select>
+                <div class="fluxo-months">
+                    <button class="month-btn">Jan</button>
+                    <button class="month-btn">Fev</button>
+                    <button class="month-btn active">Mar</button>
+                    <button class="month-btn">Abr</button>
+                    <button class="month-btn">Mai</button>
+                    <button class="month-btn">Jun</button>
+                </div>
+                <button class="btn btn-success" style="margin-left:auto;" onclick="showToast('📄 PDF do Fluxo gerado!')">
+                    <i class="fas fa-file-pdf"></i> Exportar
+                </button>
+            </div>
+            <div class="grid-2" style="margin-bottom:20px;">
+                <div class="card"><div class="card-body"><canvas id="chartFluxo" height="220"></canvas></div></div>
+                <div class="card">
+                    <div class="card-header"><div class="card-title">Saldo Projetado</div></div>
+                    <div class="card-body">
+                        <div style="display:flex;flex-direction:column;gap:12px;">
+                            <div style="display:flex;justify-content:space-between;padding:12px 14px;background:var(--secondary-light);border-radius:var(--radius-sm);"><span style="font-size:13px;font-weight:600;">Saldo Inicial (01/03)</span><strong style="color:var(--secondary);">R$ 4.200,00</strong></div>
+                            <div style="display:flex;justify-content:space-between;padding:12px 14px;background:var(--primary-light);border-radius:var(--radius-sm);"><span style="font-size:13px;font-weight:600;">Total Entradas</span><strong style="color:var(--primary);">R$ 18.400,00</strong></div>
+                            <div style="display:flex;justify-content:space-between;padding:12px 14px;background:var(--danger-light);border-radius:var(--radius-sm);"><span style="font-size:13px;font-weight:600;">Total Saídas</span><strong style="color:var(--danger);">- R$ 11.240,00</strong></div>
+                            <div style="display:flex;justify-content:space-between;padding:16px 14px;background:var(--gray-900);border-radius:var(--radius-sm);"><span style="font-size:14px;font-weight:700;color:white;">Saldo Final (31/03)</span><strong style="color:#6ee7b7;font-size:16px;">R$ 11.360,00</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== UPLOAD ===================== -->
+        <div class="section" id="s-upload">
+            <div style="margin-bottom:20px;">
+                <select class="form-select" style="max-width:240px;">
+                    <option>Moda Fashion Ltda</option>
+                    <option>João Silva</option>
+                </select>
+            </div>
+            <div class="upload-zone" onclick="showToast('📎 Selecione o arquivo para upload')">
+                <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                <div class="upload-title">Arraste e solte os documentos aqui</div>
+                <div class="upload-sub">Extratos bancários, planilhas Excel, Notas Fiscais, PDFs</div>
+                <div style="margin-top:14px;"><button class="btn btn-primary" onclick="event.stopPropagation();showToast('📁 Abrindo seletor de arquivo...')"><i class="fas fa-folder-open"></i> Selecionar Arquivo</button></div>
+            </div>
+            <div class="file-list" style="margin-top:16px;">
+                <div class="file-item"><div class="file-icon">📊</div><div><div class="file-name">extrato_banco_marco2026.xlsx</div><div class="file-size">128 KB • Enviado em 17/03/2026</div></div><div class="file-status"><span class="badge badge-success">Processado</span></div></div>
+                <div class="file-item"><div class="file-icon">📄</div><div><div class="file-name">notas_fiscais_fevereiro.pdf</div><div class="file-size">2.3 MB • Enviado em 05/03/2026</div></div><div class="file-status"><span class="badge badge-success">Processado</span></div></div>
+                <div class="file-item"><div class="file-icon">📊</div><div><div class="file-name">planilha_custos_marco.xlsx</div><div class="file-size">84 KB • Enviado em 16/03/2026</div></div><div class="file-status"><span class="badge badge-warning">Aguardando</span></div></div>
+            </div>
+        </div>
+
+        <!-- ===================== RELATÓRIOS ===================== -->
+        <div class="section" id="s-relatorios">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><div class="card-title"><i class="fas fa-file-pdf" style="color:var(--danger);margin-right:8px;"></i>Gerar Novo Relatório</div></div>
+                    <div class="card-body">
+                        <div class="form-group"><label class="form-label">Cliente <span>*</span></label><select class="form-select"><option>Moda Fashion Ltda</option><option>João Silva</option></select></div>
+                        <div class="form-group"><label class="form-label">Tipo de Relatório</label><select class="form-select"><option>DRE Gerencial Completo</option><option>Fluxo de Caixa</option><option>Relatório de Diagnóstico</option><option>Resumo Executivo</option></select></div>
+                        <div class="form-row"><div class="form-group"><label class="form-label">Período Início</label><input class="form-input" type="month" value="2026-03"></div><div class="form-group"><label class="form-label">Período Fim</label><input class="form-input" type="month" value="2026-03"></div></div>
+                        <button class="btn btn-success" style="width:100%;" onclick="showToast('📄 Relatório gerado com sucesso! Baixando...')"><i class="fas fa-download"></i> Gerar e Baixar PDF</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><div class="card-title">Histórico de Relatórios</div></div>
+                    <div class="card-body" style="padding:0;">
+                        <div style="display:flex;flex-direction:column;">
+                            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.1s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='white'"><i class="fas fa-file-pdf" style="color:var(--danger);font-size:20px;"></i><div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">DRE Gerencial — Mar/2026</div><div style="font-size:11.5px;color:var(--gray-500);">Moda Fashion Ltda • 17/03/2026</div></div><button class="action-btn"><i class="fas fa-download"></i></button></div>
+                            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.1s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='white'"><i class="fas fa-file-pdf" style="color:var(--danger);font-size:20px;"></i><div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Fluxo de Caixa — Fev/2026</div><div style="font-size:11.5px;color:var(--gray-500);">Moda Fashion Ltda • 05/03/2026</div></div><button class="action-btn"><i class="fas fa-download"></i></button></div>
+                            <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;transition:background 0.1s;" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='white'"><i class="fas fa-file-pdf" style="color:var(--danger);font-size:20px;"></i><div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Diagnóstico Inicial — Jan/2026</div><div style="font-size:11.5px;color:var(--gray-500);">João Silva • 20/01/2026</div></div><button class="action-btn"><i class="fas fa-download"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== PORTAL CLIENTE ===================== -->
+        <div class="section" id="s-portalDash">
+            <div class="portal-header">
+                <div class="portal-greeting">Bem-vindo de volta,</div>
+                <div class="portal-name">Moda Fashion Ltda 👋</div>
+                <div class="portal-meta">Última atualização: 17 de março de 2026 • Consultor: Andre</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-header"><div class="stat-icon green"><i class="fas fa-arrow-up"></i></div><div class="stat-trend up">+8%</div></div><div class="stat-value">R$ 18,4k</div><div class="stat-label">Receita do Mês</div></div>
+                <div class="stat-card"><div class="stat-header"><div class="stat-icon red"><i class="fas fa-arrow-down"></i></div><div class="stat-trend down">+3%</div></div><div class="stat-value">R$ 11,2k</div><div class="stat-label">Despesas do Mês</div></div>
+                <div class="stat-card"><div class="stat-header"><div class="stat-icon blue"><i class="fas fa-chart-line"></i></div><div class="stat-trend up">7,9%</div></div><div class="stat-value">R$ 1.460</div><div class="stat-label">Resultado Líquido</div></div>
+                <div class="stat-card"><div class="stat-header"><div class="stat-icon green"><i class="fas fa-wallet"></i></div><div class="stat-trend up">+170%</div></div><div class="stat-value">R$ 11,3k</div><div class="stat-label">Saldo Final</div></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-title">Evolução Mensal</div></div>
+                <div class="card-body"><canvas id="chartPortal" height="200"></canvas></div>
+            </div>
+        </div>
+
+        <div class="section" id="s-portalDRE">
+            <div class="card">
+                <div class="card-header">
+                    <div><div class="card-title">Meu DRE — Março 2026</div><div class="card-subtitle">Demonstrativo de Resultado do Exercício</div></div>
+                    <button class="btn btn-outline" onclick="showToast('📄 Baixando DRE em PDF...')"><i class="fas fa-download"></i> Baixar PDF</button>
+                </div>
+                <div class="card-body">
+                    <table class="dre-table">
+                        <tr><td colspan="2" class="dre-section-title">RECEITAS</td></tr>
+                        <tr><td style="padding-left:24px;">Vendas Balcão</td><td class="text-right text-green">R$ 12.800,00</td></tr>
+                        <tr><td style="padding-left:24px;">Vendas Online</td><td class="text-right text-green">R$ 5.600,00</td></tr>
+                        <tr><td colspan="2" class="dre-total"><td>Receita Líquida</td><td class="text-right">R$ 18.080,00</td></tr>
+                        <tr><td colspan="2" class="dre-section-title">CUSTOS E DESPESAS</td></tr>
+                        <tr><td style="padding-left:24px;">CMV</td><td class="text-right text-red">- R$ 8.200,00</td></tr>
+                        <tr><td style="padding-left:24px;">Pessoal</td><td class="text-right text-red">- R$ 4.200,00</td></tr>
+                        <tr><td style="padding-left:24px;">Aluguel</td><td class="text-right text-red">- R$ 2.800,00</td></tr>
+                        <tr><td style="padding-left:24px;">Demais Despesas</td><td class="text-right text-red">- R$ 1.420,00</td></tr>
+                        <tr><td colspan="2" class="dre-result"><td>RESULTADO LÍQUIDO</td><td class="text-right">R$ 1.460,00 ✅</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="s-portalFluxo">
+            <div class="card"><div class="card-header"><div class="card-title">Fluxo de Caixa — Março 2026</div></div><div class="card-body"><canvas id="chartPortalFluxo" height="250"></canvas></div></div>
+        </div>
+
+        <div class="section" id="s-portalDocs">
+            <div class="card">
+                <div class="card-header"><div class="card-title">Meus Documentos</div></div>
+                <div class="card-body">
+                    <div class="file-item"><div class="file-icon">📊</div><div><div class="file-name">extrato_banco_marco2026.xlsx</div><div class="file-size">128 KB • 17/03/2026</div></div><button class="action-btn"><i class="fas fa-download"></i></button></div>
+                    <div class="file-item"><div class="file-icon">📄</div><div><div class="file-name">notas_fiscais_fevereiro.pdf</div><div class="file-size">2.3 MB • 05/03/2026</div></div><button class="action-btn"><i class="fas fa-download"></i></button></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="s-portalRelatorios">
+            <div class="card">
+                <div class="card-header"><div class="card-title">Histórico de Relatórios</div></div>
+                <div class="card-body" style="padding:0;">
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--gray-100);"><i class="fas fa-file-pdf" style="color:var(--danger);font-size:20px;"></i><div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">DRE Gerencial — Mar/2026</div><div style="font-size:11.5px;color:var(--gray-500);">Gerado em 17/03/2026</div></div><button class="btn btn-outline" style="font-size:12px;padding:6px 12px;"><i class="fas fa-download"></i> Baixar</button></div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;"><i class="fas fa-file-pdf" style="color:var(--danger);font-size:20px;"></i><div style="flex:1;"><div style="font-size:13.5px;font-weight:600;">Fluxo de Caixa — Fev/2026</div><div style="font-size:11.5px;color:var(--gray-500);">Gerado em 05/03/2026</div></div><button class="btn btn-outline" style="font-size:12px;padding:6px 12px;"><i class="fas fa-download"></i> Baixar</button></div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end content -->
+</div><!-- end main -->
+
+<!-- MODAL NOVO CLIENTE -->
+<div class="modal-overlay" id="modal-novoCliente">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">👤 Novo Cliente</div>
+            <span class="modal-close" onclick="closeModal('novoCliente')">×</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Tipo <span>*</span></label><select class="form-select"><option>Pessoa Jurídica</option><option>Pessoa Física</option></select></div>
+                <div class="form-group"><label class="form-label">Porte</label><select class="form-select"><option>MEI</option><option>ME</option><option>EPP</option></select></div>
+            </div>
+            <div class="form-group"><label class="form-label">Nome / Razão Social <span>*</span></label><input class="form-input" placeholder="Ex: Moda Fashion Ltda"></div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">CPF / CNPJ <span>*</span></label><input class="form-input" placeholder="00.000.000/0001-00"></div>
+                <div class="form-group"><label class="form-label">Segmento</label><input class="form-input" placeholder="Ex: Loja de Roupas"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" placeholder="email@empresa.com"></div>
+                <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" placeholder="(45) 99999-9999"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Observações</label><textarea class="form-textarea" placeholder="Informações relevantes sobre o cliente..."></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('novoCliente')">Cancelar</button>
+            <button class="btn btn-primary" onclick="closeModal('novoCliente');showToast('✅ Cliente cadastrado com sucesso!')"><i class="fas fa-save"></i> Cadastrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NOVO LANÇAMENTO -->
+<div class="modal-overlay" id="modal-novoLanc">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">💰 Novo Lançamento</div>
+            <span class="modal-close" onclick="closeModal('novoLanc')">×</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Tipo <span>*</span></label><select class="form-select"><option>Receita</option><option>Despesa</option></select></div>
+                <div class="form-group"><label class="form-label">Data <span>*</span></label><input class="form-input" type="date" value="2026-03-17"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Descrição <span>*</span></label><input class="form-input" placeholder="Ex: Vendas do dia"></div>
+            <div class="form-row">
+                <div class="form-group"><label class="form-label">Categoria</label><select class="form-select"><option>Receita Operacional</option><option>Despesa Fixa</option><option>Custo de Mercadoria</option><option>Despesa com Pessoal</option><option>Despesa Administrativa</option></select></div>
+                <div class="form-group"><label class="form-label">Valor (R$) <span>*</span></label><input class="form-input" type="number" placeholder="0,00"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal('novoLanc')">Cancelar</button>
+            <button class="btn btn-primary" onclick="closeModal('novoLanc');showToast('✅ Lançamento adicionado!')"><i class="fas fa-save"></i> Salvar</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+    let currentUser = null;
+    let loginType = 'consultor';
+
+    // ===== LOGIN =====
+    function setLoginTab(type) {
+        loginType = type;
+        document.querySelectorAll('.login-tab').forEach((t,i) => {
+            t.classList.toggle('active', (i===0&&type==='consultor')||(i===1&&type==='cliente'));
+        });
+    }
+
+    function doLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+        if (!email || !pass) { showToast('⚠️ Preencha e-mail e senha'); return; }
+        document.getElementById('loginScreen').style.display = 'none';
+        if (loginType === 'cliente') {
+            currentUser = 'cliente';
+            document.getElementById('consultorNav').style.display = 'none';
+            document.getElementById('clienteNav').style.display = 'block';
+            document.getElementById('avatarInitials').textContent = 'MF';
+            document.getElementById('userNameDisplay').textContent = 'Moda Fashion';
+            document.getElementById('userRoleDisplay').textContent = 'Cliente';
+            document.getElementById('headerActionBtn').style.display = 'none';
+            document.getElementById('periodoCtrl').style.display = 'none';
+            showSection('portalDash');
+        } else {
+            currentUser = 'consultor';
+            document.getElementById('avatarInitials').textContent = 'AD';
+            document.getElementById('userNameDisplay').textContent = 'Andre Demo';
+            document.getElementById('userRoleDisplay').textContent = 'Consultor';
+            showSection('dashboard');
+        }
+        setTimeout(() => showToast('✅ Login realizado com sucesso!'), 300);
+    }
+
+    function logout() {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPass').value = '';
+        document.getElementById('consultorNav').style.display = 'block';
+        document.getElementById('clienteNav').style.display = 'none';
+        document.getElementById('headerActionBtn').style.display = 'inline-flex';
+        document.getElementById('periodoCtrl').style.display = 'inline-flex';
+        loginType = 'consultor';
+        document.querySelectorAll('.login-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+    }
+
+    // ===== NAVEGAÇÃO =====
+    const sectionMeta = {
+        dashboard: { title: 'Dashboard', sub: 'Visão geral de todos os clientes • Março 2026', btn: 'Novo Cliente', btnIcon: 'fa-plus', btnAction: "openModal('novoCliente')" },
+        clientes: { title: 'Clientes', sub: 'Gerenciamento de carteira de clientes', btn: 'Novo Cliente', btnIcon: 'fa-user-plus', btnAction: "openModal('novoCliente')" },
+        checklist: { title: 'Diagnóstico', sub: 'Checklist de auditoria financeira', btn: 'Salvar', btnIcon: 'fa-save', btnAction: "showToast('✅ Salvo!')" },
+        lancamentos: { title: 'Lançamentos', sub: 'Controle de receitas e despesas', btn: 'Novo Lançamento', btnIcon: 'fa-plus', btnAction: "openModal('novoLanc')" },
+        dre: { title: 'DRE Gerencial', sub: 'Demonstrativo de Resultado do Exercício', btn: 'Exportar PDF', btnIcon: 'fa-file-pdf', btnAction: "showToast('📄 PDF gerado!')" },
+        fluxo: { title: 'Fluxo de Caixa', sub: 'Projeção e controle financeiro', btn: 'Exportar PDF', btnIcon: 'fa-file-pdf', btnAction: "showToast('📄 PDF gerado!')" },
+        upload: { title: 'Upload de Documentos', sub: 'Extratos, planilhas e notas fiscais', btn: 'Fazer Upload', btnIcon: 'fa-upload', btnAction: "showToast('📁 Seletor aberto')" },
+        relatorios: { title: 'Relatórios PDF', sub: 'Geração e histórico de relatórios', btn: 'Gerar Relatório', btnIcon: 'fa-file-pdf', btnAction: "showToast('📄 Gerando...')" },
+        portalDash: { title: 'Minha Área', sub: 'Resumo financeiro do mês atual', btn: '', btnIcon: '', btnAction: '' },
+        portalDRE: { title: 'Meu DRE', sub: 'Demonstrativo de resultado', btn: 'Baixar PDF', btnIcon: 'fa-download', btnAction: "showToast('📄 Baixando...')" },
+        portalFluxo: { title: 'Fluxo de Caixa', sub: 'Entradas e saídas do mês', btn: '', btnIcon: '', btnAction: '' },
+        portalDocs: { title: 'Meus Documentos', sub: 'Arquivos compartilhados pelo consultor', btn: '', btnIcon: '', btnAction: '' },
+        portalRelatorios: { title: 'Meus Relatórios', sub: 'Histórico de relatórios gerados', btn: '', btnIcon: '', btnAction: '' },
+    };
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const el = document.getElementById('s-' + id);
+        if (el) el.classList.add('active');
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(n => { if (n.getAttribute('onclick') && n.getAttribute('onclick').includes(id)) n.classList.add('active'); });
+        const meta = sectionMeta[id];
+        if (meta) {
+            document.getElementById('pageTitle').textContent = meta.title;
+            document.getElementById('pageSubtitle').textContent = meta.sub;
+            const btn = document.getElementById('headerActionBtn');
+            if (meta.btn) {
+                btn.innerHTML = `<i class="fas ${meta.btnIcon}"></i> ${meta.btn}`;
+                btn.setAttribute('onclick', meta.btnAction);
+                btn.style.display = 'inline-flex';
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+        if (id === 'dashboard') initCharts();
+        if (id === 'fluxo') initFluxoChart();
+        if (id === 'portalDash') initPortalChart();
+        if (id === 'portalFluxo') initPortalFluxoChart();
+    }
+
+    function setPeriodo(el, val) {
+        document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        showToast('📅 Período alterado: ' + val);
+    }
+
+    // ===== MODAIS =====
+    function openModal(id) {
+        document.getElementById('modal-' + id).classList.add('open');
+    }
+
+    function closeModal(id) {
+        document.getElementById('modal-' + id).classList.remove('open');
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('open'); });
+    });
+
+    // ===== TOAST =====
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerHTML = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ===== CHARTS =====
+    let charts = {};
+
+    function initCharts() {
+        if (charts.recDesp) { charts.recDesp.destroy(); }
+        if (charts.status) { charts.status.destroy(); }
+
+        charts.recDesp = new Chart(document.getElementById('chartRecDesp'), {
+            type: 'bar',
+            data: {
+                labels: ['Out', 'Nov', 'Dez', 'Jan', 'Fev', 'Mar'],
+                datasets: [
+                    { label: 'Receitas', data: [38000, 42000, 55000, 39000, 44000, 48000], backgroundColor: 'rgba(14,159,110,0.8)', borderRadius: 6 },
+                    { label: 'Despesas', data: [28000, 31000, 38000, 29000, 33000, 35000], backgroundColor: 'rgba(224,36,36,0.7)', borderRadius: 6 }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { position: 'top', labels: { font: { family: 'Inter', size: 12 } } } }, scales: { y: { ticks: { callback: v => 'R$' + (v/1000) + 'k' } } } }
+        });
+
+        charts.status = new Chart(document.getElementById('chartStatus'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Saudável', 'Atenção', 'Crítico'],
+                datasets: [{ data: [5, 2, 1], backgroundColor: ['#0e9f6e', '#ff8800', '#e02424'], borderWidth: 0, hoverOffset: 6 }]
+            },
+            options: { responsive: true, cutout: '72%', plugins: { legend: { display: false } } }
+        });
+    }
+
+    function initFluxoChart() {
+        if (charts.fluxo) charts.fluxo.destroy();
+        charts.fluxo = new Chart(document.getElementById('chartFluxo'), {
+            type: 'line',
+            data: {
+                labels: ['01','05','10','15','20','25','31'],
+                datasets: [
+                    { label: 'Saldo', data: [4200, 6800, 9200, 11400, 8900, 12300, 11360], borderColor: '#1a56db', backgroundColor: 'rgba(26,86,219,0.08)', fill: true, tension: 0.4, borderWidth: 2.5 },
+                    { label: 'Entradas', data: [0, 3200, 5100, 7800, 4200, 6900, 18400], borderColor: '#0e9f6e', backgroundColor: 'transparent', tension: 0.4, borderWidth: 2, borderDash: [5,3] },
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { labels: { font: { family: 'Inter', size: 12 } } } }, scales: { y: { ticks: { callback: v => 'R$' + (v/1000).toFixed(1) + 'k' } } } }
+        });
+    }
+
+    function initPortalChart() {
+        if (charts.portal) charts.portal.destroy();
+        charts.portal = new Chart(document.getElementById('chartPortal'), {
+            type: 'bar',
+            data: {
+                labels: ['Out', 'Nov', 'Dez', 'Jan', 'Fev', 'Mar'],
+                datasets: [
+                    { label: 'Receita', data: [15200, 17800, 22000, 16400, 17100, 18400], backgroundColor: 'rgba(14,159,110,0.8)', borderRadius: 6 },
+                    { label: 'Despesa', data: [12400, 14200, 16800, 13100, 13900, 11240], backgroundColor: 'rgba(26,86,219,0.7)', borderRadius: 6 },
+                    { label: 'Resultado', data: [2800, 3600, 5200, 3300, 3200, 7160], backgroundColor: 'rgba(99,102,241,0.8)', borderRadius: 6 }
+                ]
+            },
+            options: { responsive: true, plugins: { legend: { labels: { font: { family: 'Inter', size: 12 } } } }, scales: { y: { ticks: { callback: v => 'R$' + (v/1000) + 'k' } } } }
+        });
+    }
+
+    function initPortalFluxoChart() {
+        if (charts.portalFluxo) charts.portalFluxo.destroy();
+        charts.portalFluxo = new Chart(document.getElementById('chartPortalFluxo'), {
+            type: 'line',
+            data: {
+                labels: ['01','05','10','15','20','25','31'],
+                datasets: [{ label: 'Saldo Acumulado', data: [4200, 6800, 9200, 11400, 8900, 12300, 11360], borderColor: '#1a56db', backgroundColor: 'rgba(26,86,219,0.1)', fill: true, tension: 0.4, borderWidth: 3 }]
+            },
+            options: { responsive: true, scales: { y: { ticks: { callback: v => 'R$' + (v/1000).toFixed(1) + 'k' } } } }
+        });
+    }
+
+    // ===== CHECKLIST INTERATIVO =====
+    document.addEventListener('change', (e) => {
+        if (e.target.type === 'checkbox') {
+            const label = e.target.nextElementSibling;
+            if (label) label.classList.toggle('checked', e.target.checked);
+        }
+    });
+
+    // ===== INIT =====
+    window.addEventListener('load', () => {
+        document.getElementById('loginEmail').value = 'consultor@demo.com';
+        document.getElementById('loginPass').value = '123456';
+    });
+</script>
+</body>
+</html>
